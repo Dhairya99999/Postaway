@@ -1,0 +1,513 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "version": "1.0.0",
+      "description": "Social Media Platform",
+      "title": "Postaway"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000"
+      }
+    ],
+    "components": {
+      "securitySchemes": {
+        "JWT": {
+          "in": "header",
+          "name": "Authorization",
+          "type": "apiKey"
+        }
+      }
+    },
+    "paths": {
+      "/api/users/signIn": {
+        "post": {
+          "tags": ["User"],
+          "summary": "Login",
+          "description": "User login to get token",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "description": "User Credentials",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    },
+                    "password": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "Incorrect Credentials"
+            }
+          }
+        }
+      },
+      "/api/users/signUp": {
+        "post": {
+          "tags": ["User"],
+          "summary": "Sign Up",
+          "description": "User Signup Page",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "description": "User Credentials",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "password": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "Email is invalid or User already Exists!"
+            }
+          }
+        }
+      },
+      "/api/posts/all": {
+        "get": {
+          "tags": ["Post"],
+          "summary": "Get all the posts",
+          "description": "Route to get all the posts present in the application",
+          "security": [{ "JWT": {} }],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        }
+      },
+      "/api/posts/": {
+        "get": {
+          "tags": ["Post"],
+          "summary": "Get all the posts for a specific User",
+          "description": "Route to get all the posts posted by a specific user, the posts will be fetched based on the userId which is internally taken from the Token",
+          "security": [{ "JWT": {} }],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        },
+        "post": {
+          "tags": ["Post"],
+          "summary": "Create a new post",
+          "description": "Post route to create a new post. Provide caption in req body and image file.",
+          "security": [{ "JWT": {} }],
+          "requestBody": {
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "imageUrl": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "caption": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        }
+      },
+      "/api/posts/{postId}": {
+        "get": {
+          "tags": ["Post"],
+          "summary": "Get one specific post with the postId",
+          "description": "Route to get one specific post with the postId",
+          "security": [{ "JWT": {} }],
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Post"],
+          "summary": "Delete one specific post with its postId",
+          "description": "Route delete one specific post with its postId",
+          "security": [{ "JWT": {} }],
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        },
+        "put": {
+          "tags": ["Post"],
+          "summary": "Update a specific post by its postId",
+          "description": "Update route to update a specific post. Provide caption in req body and image file.",
+          "security": [{ "JWT": {} }],
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "imageUrl": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "caption": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        }
+      },
+      "/api/posts/filter": {
+        "post": {
+          "tags": ["Post"],
+          "summary": "Get filtered posts based on the caption search query",
+          "description": "Route to get filtered posts based on the caption search query. Provide the search query as a query parameter named 'searchContent'.",
+          "security": [{ "JWT": {} }],
+          "parameters": [
+            {
+              "in": "query",
+              "name": "search",
+              "schema": {
+                "type": "string"
+              },
+              "description": "The search term to filter posts by caption"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        }
+      },
+      "/api/posts/custom/sort": {
+        "get": {
+          "tags": ["Post"],
+          "summary": "Get sorted posts in ascending order of the date they were created",
+          "description": "Route to get sorted posts in ascending order of the date they were created",
+          "security": [{ "JWT": {} }],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        }
+      },
+      "/api/likes/{postId}": {
+        "get": {
+          "tags": ["Like"],
+          "summary": "Get all the likes for a specific postId",
+          "description": "Route to get all the likes for a specific postId",
+          "security": [{ "JWT": {} }],
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        }
+      },
+      "/api/likes/toggle/{postId}": {
+        "get": {
+          "tags": ["Like"],
+          "summary": "Toggle the like of a specific postId by a user.",
+          "description": "Route to Toggle the like of a specific postId by a user. userId will be fetched from the token",
+          "security": [{ "JWT": {} }],
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        }
+      },
+      "/api/comments/{postId}": {
+        "get": {
+          "tags": ["Comment"],
+          "summary": "Get all the comments on a specific post",
+          "description": "Route to get all the comments on a specific post, provide postId in url path param.",
+          "security": [{ "JWT": {} }],
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No comments/posts found!"
+            }
+          }
+        },
+        "post": {
+          "tags": ["Comment"],
+          "summary": "Add a new comment to a specific post",
+          "description": "Post route to Add a new comment to a specific post. provide postId in url path param.",
+          "security": [{ "JWT": {} }],
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        }
+      },
+      "/api/comments/{commentId}": {
+        "delete": {
+          "tags": ["Comment"],
+          "summary": "Delete a comment using the commentId",
+          "description": "Route to delete a comment using the commentId, provide commentId in url path param.",
+          "security": [{ "JWT": {} }],
+          "parameters": [
+            {
+              "name": "commentId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No comments/posts found!"
+            }
+          }
+        },
+        "put": {
+          "tags": ["Comment"],
+          "summary": "Update an existing comment using the commentId",
+          "description": "PUT route to update an existing comment using the commentId. provide commentId in url path param.",
+          "security": [{ "JWT": {} }],
+          "parameters": [
+            {
+              "name": "commentId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        }
+      },
+      "/api/posts/bookmarks/all": {
+        "get": {
+          "tags": ["Bookmark"],
+          "summary": "Get all the bookmarked posts for the current user",
+          "description": "Get all the bookmarked posts for the current user, userId will be fetched from the token",
+          "security": [{ "JWT": {} }],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts/bookmarks found!"
+            }
+          }
+        }
+      },
+      "/api/posts/bookmarks/{postId}": {
+        "post": {
+          "tags": ["Bookmark"],
+          "summary": "Bookmark a post, if already bookmarked, unbookmark it.",
+          "description": "Route to Bookmark a post, if already bookmarked, unbookmark it. this bookmark will be against the current user post only. userId will be fetched from the token.",
+          "security": [{ "JWT": {} }],
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "OK"
+            },
+            "404": {
+              "description": "No posts found!"
+            }
+          }
+        }
+      }
+    }
+  }
